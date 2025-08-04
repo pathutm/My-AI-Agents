@@ -25,18 +25,19 @@ if uploaded_file:
             st.subheader("📝 Quiz Questions:")
             quiz_output = result["quiz"]
 
-            # If quiz_output is a dictionary or list, format it nicely:
-            if isinstance(quiz_output, dict):
-                questions = quiz_output.get("questions", [])  # If structured with a key
+            # 🧹 Clean and split the quiz into question blocks
+            if isinstance(quiz_output, str):
+                questions = quiz_output.strip().split("\n\n")
             elif isinstance(quiz_output, list):
                 questions = quiz_output
+            elif isinstance(quiz_output, dict):
+                questions = quiz_output.get("questions", [])
             else:
-                questions = str(quiz_output).split("\n")
+                questions = [str(quiz_output)]
 
-            # Display each question with bullet points
-            for q in questions:
-                if q.strip():
-                    st.markdown(f"- {q.strip()}")
+            # 🎯 Format each question properly
+            for idx, q in enumerate(questions, 1):
+                st.markdown(f"**Q{idx}.** {q.strip()}")
 
         except Exception as e:
             st.error(f"🚨 Error: {str(e)}")

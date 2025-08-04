@@ -8,4 +8,5 @@ llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", google_api_key=GEMINI_API
 def summarize_text(input_text: str) -> str:
     """Summarizes the given text into a concise summary."""
     prompt = f"Summarize the following course material:\n\n{input_text}"
-    return llm.invoke(prompt)
+    response = llm.invoke(prompt)
+    return response.content  # ✅ Only return the text content
