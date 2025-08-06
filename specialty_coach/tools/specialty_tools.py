@@ -1,10 +1,14 @@
-from langchain.tools import tool
+import os
 import json
+from dotenv import load_dotenv
+from langchain.tools import tool
+
+load_dotenv()
 
 @tool
 def specialty_strength_tool(text: str) -> str:
     """Extracts the medical specialty and strengths from a clinical profile."""
-    # Extract specialty and strengths from text (LLM or rule-based)
+    # Stubbed response (replace with actual LLM logic if needed)
     result = {
         "specialty": "Pulmonology",
         "strengths": [

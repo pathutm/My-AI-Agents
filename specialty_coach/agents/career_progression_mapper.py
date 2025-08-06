@@ -1,14 +1,19 @@
-# agents/career_progression_mapper.py
-
-from tools.progression_tools import career_progression_tool
 from langchain.agents import initialize_agent, AgentType
-from langchain_core.language_models import BaseLanguageModel
+from tools.progression_tools import career_progression_tool
+from langchain_google_genai import ChatGoogleGenerativeAI
 
-def get_career_progression_agent(llm: BaseLanguageModel):
+llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash")
+
+def get_career_progression_agent():
     tools = [career_progression_tool]
-    return initialize_agent(
+    agent = initialize_agent(
         tools=tools,
         llm=llm,
         agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-        verbose=True
+        verbose=True,
     )
+    return agent
+
+def run_career_progression_mapper(specialty_data_str: str) -> str:
+    agent = get_career_progression_agent()
+    return agent.run(specialty_data_str)

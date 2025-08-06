@@ -5,12 +5,13 @@ Given:
 - Clinical specialty and strengths: {input_text}
 - Career aspirations: {career_goals}
 
-Suggest 3+ logical career progression paths with justifications.
-Format as JSON:
+Suggest at least 3 logical career progression paths with a one-line rationale each.
+Respond in valid JSON format like this:
+
 [
   {
-    "path": "General Medicine → Radiology",
-    "rationale": "Interest in imaging and diagnostic support."
+    "path": "Specialty → Target Role",
+    "rationale": "Short explanation."
   },
   ...
 ]
