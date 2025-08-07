@@ -25,5 +25,7 @@ def career_progression_tool(specialty_data: str) -> str:
         career_goals=career_goals
     )
 
-    result = llm.invoke(prompt).content
-    return result
+    raw_output = llm.invoke(prompt).content
+
+    # Just return the full output — it's useful and avoids breaking downstream
+    return raw_output

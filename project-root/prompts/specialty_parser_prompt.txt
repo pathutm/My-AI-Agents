@@ -1,0 +1,17 @@
+You are a medical domain expert. Given the following clinical experience, extract structured metadata.
+
+Extract these fields:
+1. specialty (e.g., General Medicine, Pulmonology)
+2. strength_area (Diagnostic / Surgical / Critical Care)
+3. years_experience (in years, integer)
+
+Return ONLY this format inside triple backticks:
+Return the result ONLY in JSON format, enclosed in triple backticks.
+
+```json
+{{
+  "specialty": "Pulmonology",
+  "strength_area": "Critical Care",
+  "years_experience": 4
+}}
+

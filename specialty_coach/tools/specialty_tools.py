@@ -1,23 +1,14 @@
-import os
-import json
-from dotenv import load_dotenv
-from langchain.tools import tool
+from langchain.agents import initialize_agent, AgentType
+from langchain.agents.agent import AgentExecutor
+from tools.specialty_strength_tool import specialty_strength_tool
 
-load_dotenv()
+def get_specialty_strength_agent(llm) -> AgentExecutor:
+    tools = [specialty_strength_tool]
 
-@tool
-def specialty_strength_tool(text: str) -> str:
-    """Extracts the medical specialty and strengths from a clinical profile."""
-    # Stubbed response (replace with actual LLM logic if needed)
-    result = {
-        "specialty": "Pulmonology",
-        "strengths": [
-            "Critical Care",
-            "Ventilator Management",
-            "Bronchoscopy",
-            "Asthma and COPD Management",
-            "ECG Interpretation",
-            "Patient Counseling"
-        ]
-    }
-    return json.dumps(result)
+    agent_executor = initialize_agent(
+        tools=tools,
+        llm=llm,
+        agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,  # or OPENAI_FUNCTIONS if using OpenAI
+        verbose=True
+    )
+    return agent_executor
