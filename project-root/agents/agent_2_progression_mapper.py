@@ -1,27 +1,19 @@
+from langchain.agents import initialize_agent, AgentType
+from tools.progression_mapper_tool import map_career_progression
 from utils.llm_config import get_gemini_llm
 
-def run_career_progression_mapper(specialty_data: dict, goals_text: str) -> str:
+def create_progression_mapper_agent():
     llm = get_gemini_llm()
 
-    prompt = f"""
-You are a career progression coach for clinicians.
+    agent = initialize_agent(
+        tools=[map_career_progression],
+        llm=llm,
+        agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+        verbose=True,
+        handle_parsing_errors=True  # ✅ This handles output format issues
+    )
+    return agent
 
-Based on the given specialty data and career goals, suggest 3 logical career progression paths. Ensure each path has a rationale.
-
-Respond only in JSON format like:
-[
-  {{
-    "path": "Pulmonology → Critical Care Medicine → Tele-ICU Consultant",
-    "rationale": "Leverages respiratory and ICU experience to transition into remote critical care."
-  }},
-  ...
-]
-
-Specialty Data:
-{specialty_data}
-
-Career Goals:
-{goals_text}
-"""
-    response = llm.invoke(prompt)
-    return response.content
+def run_career_progression(input_text: str) -> str:
+    agent = create_progression_mapper_agent()
+    return agent.run(input_text)

@@ -1,28 +1,18 @@
 import streamlit as st
 import os
-import json
-import re
 from dotenv import load_dotenv
+from tools.pdf_parser import extract_text_from_pdf
+from agents.agent_1_specialty_analyzer import create_specialty_analyzer_agent
+from agents.agent_2_progression_mapper import run_career_progression
 
 # Load environment variables
 load_dotenv()
 
-# Internal imports
-from tools.pdf_parser import extract_text_from_pdf
-from agents.agent_1_specialty_analyzer import create_specialty_analyzer_agent
-from agents.agent_2_progression_mapper import run_career_progression_mapper
-
-# Utility: clean Gemini-style ```json fenced blocks
-def clean_json_response(raw_output) -> str:
-    if hasattr(raw_output, "content"):
-        raw_output = raw_output.content
-    return re.sub(r"^```json\n|```$", "", raw_output.strip(), flags=re.MULTILINE).strip()
-
-# UI setup
+# Streamlit UI setup
 st.set_page_config(page_title="Specialty Evolution Coach", layout="centered")
 st.title("🩺 Specialty Evolution Coach")
 
-# Upload PDF
+# File upload
 uploaded_file = st.file_uploader("Upload Clinical Experience (PDF)", type="pdf")
 
 if uploaded_file:
@@ -37,31 +27,23 @@ if uploaded_file:
         with st.spinner("🔍 Agent 1: Analyzing specialty & strengths..."):
             agent1 = create_specialty_analyzer_agent()
             try:
-                raw_result = agent1.invoke({"input": extracted_text})
-                cleaned_result = clean_json_response(raw_result)
-
-                specialty_data = json.loads(cleaned_result)
+                raw_result = agent1.run(extracted_text)
                 st.subheader("📊 Specialty Analysis (Agent 1)")
-                st.json(specialty_data)
+                st.markdown(raw_result)
+
             except Exception as e:
-                st.error(f"❌ JSON parse error in Agent 1 output: {e}")
+                st.error(f"❌ Agent 1 error: {e}")
                 st.text(raw_result if 'raw_result' in locals() else "No result")
                 st.stop()
-
-        # Extract career goal for Agent 2
-        goals_text = extracted_text.split("Goals:")[-1].strip()
 
         # ----------------- AGENT 2 -----------------
         with st.spinner("🚀 Agent 2: Mapping career progression paths..."):
             try:
-                result2 = run_career_progression_mapper(specialty_data, goals_text)
-                cleaned_result2 = clean_json_response(result2)
-                progression_paths = json.loads(cleaned_result2)
-
+                result2 = run_career_progression(raw_result)
                 st.subheader("📈 Career Progression Suggestions (Agent 2)")
-                st.json(progression_paths)
+                st.markdown(result2)
             except Exception as e:
-                st.error(f"❌ JSON parse error in Agent 2 output: {e}")
+                st.error(f"❌ Error in Agent 2: {e}")
                 st.text(result2 if 'result2' in locals() else "No result")
 
     else:
