@@ -10,7 +10,7 @@ def create_progression_mapper_agent():
         llm=llm,
         agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
         verbose=True,
-        handle_parsing_errors=True  # ✅ This handles output format issues
+        handle_parsing_errors=True  # Handles output format issues
     )
     return agent
 
