@@ -1,12 +1,12 @@
-from langchain.tools import tool
+# tools/certification_suggester_tool.py
+
 from utils.rag_loader import load_certification_vectorstore
 from langchain.chains import RetrievalQA
 from utils.llm_config import get_gemini_llm
 
-@tool
-def suggest_certifications(input: str) -> str:
+def suggest_certifications_rag(input_text: str) -> str:
     """
-    Suggest required certifications or fellowships based on given career progression path.
+    Use RAG to suggest certifications or fellowships based on given career progression.
     """
     retriever = load_certification_vectorstore()
     llm = get_gemini_llm()
@@ -17,4 +17,4 @@ def suggest_certifications(input: str) -> str:
         return_source_documents=False
     )
 
-    return rag_chain.run(input)
+    return rag_chain.run(input_text)

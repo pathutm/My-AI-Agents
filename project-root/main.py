@@ -49,15 +49,13 @@ if uploaded_file:
                 st.error(f"❌ Error in Agent 2: {e}")
                 st.text(result2 if 'result2' in locals() else "No result")
                 st.stop()
-
+        
         # ----------------- AGENT 3 -----------------
-        with st.spinner("🎓 Agent 3: Suggesting Certifications..."):
-            try:
-                cert_result = run_certification_suggester(result2)
-                st.subheader("🎓 Suggested Certifications (Agent 3)")
-                st.markdown(cert_result)
-            except Exception as e:
-                st.error(f"❌ Error in Agent 3: {e}")
-
-    else:
-        st.error("❌ No text extracted from PDF.")
+if 'raw_result' in locals():
+    with st.spinner("🎓 Agent 3: Suggesting Certifications..."):
+        try:
+            cert_result = run_certification_suggester(raw_result)
+            st.subheader("🎓 Suggested Certifications (Agent 3)")
+            st.markdown(cert_result)
+        except Exception as e:
+            st.error(f"❌ Error in Agent 3: {e}")
