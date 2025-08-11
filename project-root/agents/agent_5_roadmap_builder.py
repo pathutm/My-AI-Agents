@@ -13,6 +13,8 @@ def run_roadmap_builder_agent(agent_inputs: dict) -> str:
         verbose=True
     )
 
-    return agent.invoke({
-        "input": json.dumps(agent_inputs)
-    })
+    # Pass everything as one JSON string under 'input'
+    payload = {"input": json.dumps(agent_inputs)}
+    result = agent.invoke(payload)
+
+    return result.get("output", str(result))

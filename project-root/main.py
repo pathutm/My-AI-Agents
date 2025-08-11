@@ -9,6 +9,7 @@ from agents.agent_1_specialty_analyzer import create_specialty_analyzer_agent
 from agents.agent_2_progression_mapper import run_career_progression
 from agents.agent_3_certification_rag_agent import run_certification_suggester
 from agents.mobility_agent import run_mobility_readiness_agent
+from agents.agent_5_roadmap_builder import run_roadmap_builder_agent
 
 # Load environment variables
 load_dotenv()
@@ -125,6 +126,12 @@ if st.session_state.mobility_done and "roadmap_done" not in st.session_state:
             st.session_state.roadmap_done = True
             st.session_state.roadmap_result = roadmap_result
             st.success("✅ Roadmap created!")
-            st.markdown(roadmap_result)
+            st.markdown(f"```json\n{roadmap_result}\n```")
         except Exception as e:
             st.error(f"❌ Agent 5 error: {e}")
+            
+if st.session_state.get("roadmap_done"):
+    st.subheader("✅ Final Career Roadmap")
+    st.markdown(st.session_state.roadmap_result)
+
+            

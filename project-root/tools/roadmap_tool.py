@@ -4,47 +4,30 @@ import json
 @tool
 def build_career_roadmap(input: str) -> str:
     """
-    Build a career roadmap based on prior agent outputs.
-    Input must be a JSON string with:
-    {
-        "specialty_analysis": "...",
-        "career_paths": "...",
-        "certifications": "...",
-        "mobility_result": "..."
-    }
+    Build a career roadmap based on combined input JSON.
+    The `input` should be a JSON string with keys:
+    specialty_analysis, career_paths, certifications, mobility_result
     """
-
     try:
         data = json.loads(input)
+
+        roadmap = [
+            {"objective": "Expand clinical expertise",
+             "key_results": ["Complete advanced fellowship in chosen specialty by Q3"]},
+            {"objective": "Boost leadership skills",
+             "key_results": ["Take hospital leadership training by Q4"]},
+            {"objective": "Strengthen technical proficiency",
+             "key_results": ["Master EHR and telehealth tools by Q2"]},
+            {"objective": "Increase mobility opportunities",
+             "key_results": ["Apply to 3 hospitals in preferred locations by Q1"]},
+            {"objective": "Enhance academic profile",
+             "key_results": ["Publish at least 1 research paper by Q4"]}
+        ]
+
+        return json.dumps({
+            "roadmap": roadmap,
+            "context": data
+        }, indent=2)
+
     except Exception as e:
-        return f"❌ Invalid input JSON: {e}"
-
-    roadmap = f"""### 📅 Personalized Career Roadmap
-
-1. **Objective**: Enroll in {data["certifications"].splitlines()[0]}  
-   - **Key Result**: Complete by Q3  
-   - **Reason**: Address skill gaps in specialty: {data["specialty_analysis"][:50]}...
-
-2. **Objective**: Explore roles in {data["career_paths"].split()[0]} or similar areas  
-   - **Key Result**: Apply by Q4  
-   - **Reason**: Matches career path potential and strengths
-
-3. **Objective**: Take on telehealth pilot responsibilities  
-   - **Key Result**: Lead session by next 3 months  
-   - **Reason**: Based on mobility insights & tech exposure
-
-4. **Objective**: Attend workshop on advanced procedures  
-   - **Key Result**: Complete by Q1  
-   - **Reason**: Deepen expertise in {data["specialty_analysis"].split()[0]} field
-
-5. **Objective**: Prepare application for higher role or fellowship  
-   - **Key Result**: Submit by Q2  
-   - **Reason**: Based on mobility readiness score & certification path
-
----
-
-🎯 Total Readiness: {json.loads(data["mobility_result"])['mobility_score']}%
-✅ Stay consistent and keep tracking progress every quarter.
-"""
-
-    return roadmap
+        return f"❌ Failed to build roadmap: {e}"
