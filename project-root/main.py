@@ -24,6 +24,8 @@ st.session_state.setdefault("result2", None)
 st.session_state.setdefault("cert_result", None)
 st.session_state.setdefault("mobility_done", False)
 st.session_state.setdefault("mobility_result", None)
+st.session_state.setdefault("roadmap_done", False)
+st.session_state.setdefault("roadmap_result", None)
 
 # === Upload Clinical Experience PDF ===
 uploaded_file = st.file_uploader("Upload Clinical Experience (PDF)", type="pdf")
@@ -100,20 +102,20 @@ if st.session_state.agents_done and not st.session_state.mobility_done:
                 output = result.get("output") if isinstance(result, dict) else result
                 st.session_state.mobility_result = output
                 st.session_state.mobility_done = True
-                st.success("✅ Agent 4 Complete!")
-                st.markdown(f"```json\n{output}\n```")
             except Exception as e:
                 st.error(f"❌ Agent 4 error: {e}")
 
 if st.session_state.mobility_done:
     st.subheader("✅ Mobility Readiness Result (Agent 4)")
-    st.markdown(f"```json\n{st.session_state.mobility_result}\n```")
-from agents.agent_5_roadmap_builder import run_roadmap_builder_agent
+    try:
+        parsed_mobility = json.loads(st.session_state.mobility_result)
+        st.json(parsed_mobility)
+    except Exception:
+        st.write(st.session_state.mobility_result)  # Fallback if not JSON
 
 # === Agent 5: Career Roadmap Builder ===
-if st.session_state.mobility_done and "roadmap_done" not in st.session_state:
+if st.session_state.mobility_done and not st.session_state.roadmap_done:
     st.subheader("🗺️ Career Roadmap (Agent 5)")
-
     with st.spinner("🛠️ Building your personalized roadmap..."):
         try:
             roadmap_input = {
@@ -125,13 +127,14 @@ if st.session_state.mobility_done and "roadmap_done" not in st.session_state:
             roadmap_result = run_roadmap_builder_agent(roadmap_input)
             st.session_state.roadmap_done = True
             st.session_state.roadmap_result = roadmap_result
-            st.success("✅ Roadmap created!")
-            st.markdown(f"```json\n{roadmap_result}\n```")
         except Exception as e:
             st.error(f"❌ Agent 5 error: {e}")
-            
-if st.session_state.get("roadmap_done"):
-    st.subheader("✅ Final Career Roadmap")
-    st.markdown(st.session_state.roadmap_result)
 
-            
+# Show Agent 5 output nicely
+if st.session_state.roadmap_done:
+    st.subheader("✅ Final Career Roadmap")
+    try:
+        parsed_roadmap = json.loads(st.session_state.roadmap_result)
+        st.json(parsed_roadmap)
+    except Exception:
+        st.markdown(st.session_state.roadmap_result)  # fallback for plain text

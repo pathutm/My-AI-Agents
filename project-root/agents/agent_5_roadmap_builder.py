@@ -4,6 +4,11 @@ from utils.llm_config import get_gemini_llm
 import json
 
 def run_roadmap_builder_agent(agent_inputs: dict) -> str:
+    """
+    Runs the Roadmap Builder Agent.
+    Expects agent_inputs to be a dict containing:
+      specialty_analysis, career_paths, certifications, mobility_result
+    """
     llm = get_gemini_llm()
 
     agent = initialize_agent(
@@ -13,8 +18,9 @@ def run_roadmap_builder_agent(agent_inputs: dict) -> str:
         verbose=True
     )
 
-    # Pass everything as one JSON string under 'input'
-    payload = {"input": json.dumps(agent_inputs)}
-    result = agent.invoke(payload)
+    # Directly pass the dict instead of building a big natural language prompt
+    # ZERO_SHOT_REACT_DESCRIPTION will handle calling the tool
+    payload = {"input": json.dumps(agent_inputs, ensure_ascii=False)}
 
+    result = agent.invoke(payload)
     return result.get("output", str(result))

@@ -1,15 +1,23 @@
 from langchain.tools import tool
 import json
+import re
 
 @tool
 def build_career_roadmap(input: str) -> str:
     """
     Build a career roadmap based on combined input JSON.
-    The `input` should be a JSON string with keys:
+    The `input` can be a JSON string or Python dict with keys:
     specialty_analysis, career_paths, certifications, mobility_result
     """
     try:
-        data = json.loads(input)
+        # Handle both dicts and strings
+        if isinstance(input, dict):
+            data = input
+        else:
+            clean_input = str(input).strip()
+            # Remove markdown code fences if present
+            clean_input = re.sub(r"^```(?:json)?|```$", "", clean_input, flags=re.MULTILINE).strip()
+            data = json.loads(clean_input)
 
         roadmap = [
             {"objective": "Expand clinical expertise",
